@@ -1,0 +1,8 @@
+
+--- Bloque 1 ---
+| TABLA | FILAS_DE_TITULARIDAD | PERSONAS_DISTINTAS | MATRICULAS_DISTINTAS | FILAS_POR_PERSONA |
+|---|---|---|---|---|
+| B2 - ACTIVOS | 226594 | 124679 | 164418 | 1.82 |
+| B4 - HISTORICOS | 213771 | 97397 | 127803 | 2.19 |
+| B5 - NO VIGENTES | 2627 | 2107 | 1852 | 1.25 |
+| TOTAL (matriculas sin repetir entre tablas) | 442992 | 178821 | 255683 | 2.48 |
