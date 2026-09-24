@@ -1,0 +1,6 @@
+|ESTRATO|CANTIDAD_GRUPOS|TOTAL_REGISTROS_EN_ESTRATO|REGISTROS_REDUNDANTES_ESTRATO|MIN_DUPLICADOS|MAX_DUPLICADOS|PROMEDIO_DUPLICADOS|
+|-------|---------------|--------------------------|-----------------------------|--------------|--------------|-------------------|
+|1 - BAJO (2-3)|113959|248792|134833|2|3|2.18|
+|2 - MEDIO (4-6)|7545|32824|25279|4|6|4.35|
+|3 - ALTO (7-10)|328|2484|2156|7|10|7.57|
+|4 - MUY ALTO (11+)|20|243|223|11|18|12.15|

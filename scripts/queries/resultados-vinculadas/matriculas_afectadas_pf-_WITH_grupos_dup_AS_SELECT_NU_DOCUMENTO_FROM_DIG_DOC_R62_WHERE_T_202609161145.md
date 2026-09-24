@@ -1,0 +1,6 @@
+|TABLA|FILAS_DE_TITULARIDAD|PERSONAS_DISTINTAS|MATRICULAS_DISTINTAS|FILAS_POR_PERSONA|
+|-----|--------------------|------------------|--------------------|-----------------|
+|B2 - ACTIVOS|228103|125298|165120|1.82|
+|B4 - HISTORICOS|213771|97397|127803|2.19|
+|B5 - NO VIGENTES|2638|2117|1861|1.25|
+|TOTAL (matriculas sin repetir entre tablas)|444512|179187|256175|2.48|

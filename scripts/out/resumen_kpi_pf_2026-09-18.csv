@@ -1,0 +1,47 @@
+﻿SECCION;INDICADOR;VALOR;% ;FUENTE;FECHA DE CORTE
+1 - PUNTO DE PARTIDA;Personas fisicas cargadas en el catalogo (DIG_DOC_R62);983839;;Titulares BD.xlsx (base refrescada);2026-09-16
+1 - PUNTO DE PARTIDA;Grupos de documento duplicado (total, con placeholders excluidos);121852;100%;distribucion_estratos_pf.sql;2026-09-16
+1 - PUNTO DE PARTIDA;Registros redundantes (copias de mas) en el total;162491;;distribucion_estratos_pf.sql;2026-09-16
+2 - RECORTE DEL ALCANCE;Grupos que tocan una matricula REAL y requieren revision;55918;45,9%;vinculadas_matricula_real_listado_grupos_pf.sql;2026-09-18
+2 - RECORTE DEL ALCANCE;Grupos con un solo registro vinculado (fusion automatica, sin revision);45632;37,4%;vinculadas_matricula_real_kpi_pf.sql;2026-09-17
+2 - RECORTE DEL ALCANCE;Grupos que no tocan ninguna matricula real (fuera de alcance);20302;16,7%;vinculadas_matricula_real_kpi_pf.sql;2026-09-17
+3 - EL UNIVERSO DE TRABAJO;Grupos a revisar;55918;100%;vinculadas_matricula_real_listado_grupos_pf.sql;2026-09-18
+3 - EL UNIVERSO DE TRABAJO;Registros de persona dentro de esos grupos;134128;;vinculadas_matricula_real_listado_grupos_pf.sql;2026-09-18
+3 - EL UNIVERSO DE TRABAJO;Registros redundantes (copias de mas a fusionar);78210;;vinculadas_matricula_real_listado_grupos_pf.sql;2026-09-18
+3 - EL UNIVERSO DE TRABAJO;Personas vinculadas a una matricula real;123118;;vinculadas_matricula_real_listado_grupos_pf.sql;2026-09-18
+3 - EL UNIVERSO DE TRABAJO;Personas cuya titularidad hay que reasignar al fusionar;67200;;vinculadas_matricula_real_listado_grupos_pf.sql;2026-09-18
+3 - EL UNIVERSO DE TRABAJO;Filas de titularidad (FK) a revisar y reasignar;304774;;vinculadas_matricula_real_listado_grupos_pf.sql;2026-09-18
+4 - PRIORIZACION;P1 - dos o mas registros como titular ACTIVO (rompe datos hoy);30136;53,9%;vinculadas_matricula_real_listado_grupos_pf.sql;2026-09-18
+4 - PRIORIZACION;P2 - un activo + historicos;17449;31,2%;vinculadas_matricula_real_listado_grupos_pf.sql;2026-09-18
+4 - PRIORIZACION;P3 - solo historicos (B4/B5);8333;14,9%;vinculadas_matricula_real_listado_grupos_pf.sql;2026-09-18
+5 - TAMANIO DE LOS GRUPOS;Estrato BAJO (2 a 3 registros);51323;91,8%;vinculadas_matricula_real_listado_grupos_pf.sql;2026-09-18
+5 - TAMANIO DE LOS GRUPOS;Estrato MEDIO (4 a 6 registros);4384;7,8%;vinculadas_matricula_real_listado_grupos_pf.sql;2026-09-18
+5 - TAMANIO DE LOS GRUPOS;Estrato ALTO (7 a 10 registros);200;0,4%;vinculadas_matricula_real_listado_grupos_pf.sql;2026-09-18
+5 - TAMANIO DE LOS GRUPOS;Estrato MUY ALTO (11 o mas registros);11;0,02%;vinculadas_matricula_real_listado_grupos_pf.sql;2026-09-18
+5 - TAMANIO DE LOS GRUPOS;Maximo de registros vinculados en un mismo grupo;12;;vinculadas_matricula_real_listado_grupos_pf.sql;2026-09-18
+6 - HALLAZGO CRITICO;Matriculas donde la MISMA persona figura 2+ veces como titular activo;2868;;vinculadas_doble_titular_misma_matricula_detalle.sql;2026-09-18
+6 - HALLAZGO CRITICO;Casos (matricula + documento);3362;;vinculadas_doble_titular_misma_matricula_detalle.sql;2026-09-18
+6 - HALLAZGO CRITICO;Documentos involucrados;2947;9,8% de los P1;vinculadas_doble_titular_misma_matricula_detalle.sql;2026-09-18
+6 - HALLAZGO CRITICO;Registros de persona involucrados;6842;;vinculadas_doble_titular_misma_matricula.sql;2026-09-17
+6 - HALLAZGO CRITICO;Filas de titulares activos (B2) involucradas;7365;;vinculadas_doble_titular_misma_matricula.sql;2026-09-17
+6 - HALLAZGO CRITICO;Maximo de veces que una persona aparece en UNA matricula;9;;vinculadas_doble_titular_misma_matricula.sql;2026-09-17
+7 - CONTEXTO REGISTRAL;Matriculas reales en la base (con NU_MATRICULA cargado);523617;;censo_matriculas_r00.sql;2026-09-17
+7 - CONTEXTO REGISTRAL;Registros de legado Tomo/Folio (sin NU_MATRICULA, fuera de alcance);277212;;censo_matriculas_r00.sql;2026-09-17
+7 - CONTEXTO REGISTRAL;Matriculas con al menos un titular activo duplicado (cota superior, ver nota 4);164418;;vinculadas_matriculas_afectadas.sql;2026-09-17
+8 - QUEDA FUERA;Personas fisicas sin documento cargado (no deduplicables por documento);163986;16,7% del padron PF;Titulares BD.xlsx;2026-09-16
+8 - QUEDA FUERA;De esas, recuperables por campo alternativo;2516;;recuperables_documento_cero.sql;2026-09-16
+8 - QUEDA FUERA;Documentos placeholder excluidos del analisis;7111;;Titulares BD.xlsx;2026-09-16
+9 - PERSONAS JURIDICAS;Personas juridicas cargadas;56399;;Titulares BD.xlsx;2026-09-16
+9 - PERSONAS JURIDICAS;Sin CUIT cargado;12322;;pj_kpi_sin_placeholder.sql;2026-09-16
+9 - PERSONAS JURIDICAS;Con CUIT invalido (longitud distinta de 11);11598;;pj_kpi_sin_placeholder.sql;2026-09-16
+9 - PERSONAS JURIDICAS;Grupos de CUIT duplicado;5814;;pj_kpi_sin_placeholder.sql;2026-09-16
+9 - PERSONAS JURIDICAS;Registros redundantes (excluido el CUIT placeholder 30999078040);12787;;pj_kpi_sin_placeholder.sql;2026-09-16
+;;;;;
+NOTAS;;;;;
+NOTA 1;Todas las cifras salen del entorno de DESARROLLO de SIRCLAN, que se refresca cada tanto y va unas 2 semanas atras de produccion. No son cifras de produccion.;;;;
+NOTA 2;Universo de trabajo = grupos de personas fisicas con el mismo numero de documento donde DOS O MAS registros cuelgan de una matricula real. Los grupos con un solo registro vinculado no necesitan revision: el ganador ya esta determinado.;;;;
+NOTA 3;Matricula real = DIG_DOC_R00 con NU_MATRICULA cargado, en cualquier estado (MIG/ACT/BAJ/CRE). El legado Tomo/Folio no tiene ningun registro en estado ACT y queda fuera. Las matriculas dadas de baja (BAJ) quedan DENTRO del alcance por decision del 17/09/2026.;;;;
+NOTA 4;Las 164.418 matriculas con titular activo duplicado son una COTA SUPERIOR: esa consulta cuenta tambien los grupos con un solo registro vinculado y no exige NU_MATRICULA. Pendiente de rehacer restringida al universo de trabajo. Por el mismo motivo NO se publica el porcentaje contra las 523.617 matriculas reales.;;;;
+NOTA 5;Se excluyen los registros con ELIMINADO=1 en las tablas de titulares activos (B2) y no vigentes (B5): se verifico el 17/09/2026 que es una baja logica real. La tabla de historicos (B4) no tiene esa columna.;;;;
+NOTA 6;Se excluyen los documentos placeholder (0, 00, 000, 000000, 0000000, 00000000, 1 y 99907804) de todos los conteos de duplicados.;;;;
+NOTA 7;Ninguna cifra de este archivo se valido contra la API de RENAPER. La validacion de identidad queda para la revision manual (ver la hoja de casos representativos).;;;;
