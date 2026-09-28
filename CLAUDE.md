@@ -90,8 +90,12 @@ Otras reglas:
 | `scripts/queries/vinculadas_doble_titular_misma_matricula_detalle.sql` | Bloque 2 (detalle fila por fila) de `vinculadas_doble_titular_misma_matricula.sql`, separado a archivo propio | Corrida 18/09/2026 → `scripts/out/vinculadas_doble_titular_misma_matricula_detalle_2026-09-18.md` — 3.362 filas, 2.868 matrículas distintas, ver §3 | Sí |
 | `scripts/queries/vinculadas_matricula_real_listado_grupos_pf.sql` | Lista de trabajo definitiva: una fila por grupo de los 55.918, priorizada P1/P2/P3, con matrícula real + `ELIMINADO` filtrados. Rehace `vinculadas_listado_grupos_pf.sql` (pendiente de §10, cerrado) | Corrida 18/09/2026 → `scripts/out/detalle_grupos_priorizado_2026-09-18.csv` — 55.918 filas, cierra exacto contra §3 | Sí |
 | `scripts/queries/casos_representativos_pf.sql` | Los 67 casos del entregable (59 de muestra aleatoria + 8 emblemáticos), registro por registro de `DIG_DOC_R62` con `CD_SEXO`, `CD_USER_STORE`, `DT_NACIMIENTO` y columnas vacías para validar a mano; bloque 2 con sus matrículas | Corrida 18/09/2026 → `scripts/out/casos_representativos_*_2026-09-18.csv` | Sí |
+| `scripts/queries/titulares_activos_matricula_inexistente_pf.sql` | La query que usó el usuario para armar `docs/Titulares_activos_con_matricula_inexistente.csv` (26 columnas, coincide exacto con el header del CSV) — guardada acá el 24/09/2026 | Pasada por el usuario 24/09/2026 (no filtra `ELIMINADO` explícitamente, pero las 477 filas dieron `ELIMINADO=0` igual) | Sí |
 | `scripts/queries/titularidad_huerfana_cruces.sql`, `titularidad_huerfana_clave_alternativa.sql` | Cruces de las 477 titularidades B2 PF vivas con matrícula inexistente (`docs/Titulares_activos_con_matricula_inexistente.csv`): columnas MIG_*, caso de origen en matrícula existente, ID que en realidad es un `NU_MATRICULA`, densidad de IDs de R00 | Corridas 24/09/2026 → `scripts/out/titularidad_huerfana_*_2026-09-24_bloque*.csv` | Sí |
 | `scripts/analisis/analizar_titulares_huerfanos.py` + gemelo `.js` | Análisis de patrones de esas 477 filas y clasificación heurística (borrar / revisar / no borrar). El `.py` (Pandas) **no se pudo ejecutar** (no hay Python); el `.js` tiene la misma lógica y sí se corrió | 24/09/2026 → `scripts/out/reporte_patrones_titulares_huerfanos_2026-09-24.md` + `titulares_huerfanos_clasificados_2026-09-24.csv` | Sí |
+| `scripts/analisis/generar_dml_titulares_huerfanos.js` | Genera el DML de revisión (`DELETE FROM DIG_DOC_R00_B2 ... WHERE ID_MATRICULA=... AND NU_SEQUENCE=...`) a partir de la clasificación de arriba, **no lo ejecuta** (§0) | Corrido 24/09/2026 → `scripts/out/dml_borrado_titulares_huerfanos_propuesto_2026-09-24.sql`: 140 `DELETE` activos (categoría 3, copias confirmadas), 24 comentados a verificar antes (categorías 1+2), 313 sin propuesta (categorías 4/5/6) | Sí |
+| `scripts/queries/validacion_huerfanos_0{1..5}_*.sql` | Validación del 25/09 de las 477 titularidades huérfanas: dataset con indicadores (01), registros reales relacionados (02), rastro de cada ID y bandas (03), matrícula candidata por NU_MATRICULA / número sin depto / R18 / tomo-foja (04), formulario de matriculación R18 de cada fila (05) | Corridas 25/09/2026 → `scripts/out/validacion_huerfanos_0*_2026-09-25_bloque*.csv` | Sí |
+| `scripts/analisis/validar_titulares_huerfanos.js` | Reglas de validación, clasificación final y reporte (importa la lógica del 24/09 de `analizar_titulares_huerfanos.js` para la categoría original) | Corrido 25/09/2026 → `scripts/out/ANALISIS_TITULARES_MATRICULA_INEXISTENTE_DETALLE.csv`, `validacion_huerfanos_s{2..6}_*_2026-09-25.csv`, `reporte_validacion_titulares_huerfanos_2026-09-25.md` | Sí |
 | `scripts/out/README_entregable_2026-09-18.md` + los 6 `*_2026-09-18.csv` | **Entregable del 18/09 para Mónica**: guía de armado + Resumen, Detalle priorizado, casos representativos (registros / candidato / matrículas) y doble titular. CSV con BOM UTF-8 y separador `;` | Vigente — ver §3 "Entregable del 18/09" | Sí (son salidas) |
 | `scripts/db-tools/RunQuery.java` + `README.md` | Corredor de queries de solo lectura contra Oracle, reusando el túnel SSH de DBeaver (JDBC Thin, `lib/ojdbc11.jar`). **Desde el 18/09: salida UTF-8 siempre + modo `--csv`** (BOM, separador `;`, comillado RFC 4180) | Probado y funcionando 18/09/2026 | Sí |
 
@@ -779,6 +783,55 @@ prueba reales embebidos.
   está en `DIG_DOC_R00`. Sin FK declaradas (§2), nada lo impide. Sin explicación de causa
   todavía — candidato a "matrículas borradas de R00 sin limpiar sus titularidades", pero
   no confirmado.
+- **Análisis de patrones de esas 477 titularidades B2 de PF vivas** (24/09/2026, sobre
+  `docs/Titulares_activos_con_matricula_inexistente.csv`, ver
+  `scripts/out/reporte_patrones_titulares_huerfanos_2026-09-24.md`): **no es un artefacto
+  de la migración** (solo 3 filas tienen marca de migración; el 88,5% las grabó WORKFLOW,
+  45 usuarios distintos, repartidas 2018-2026, sin un día de carga masiva). El patrón más
+  fuerte es **re-grabado del mismo titular en la misma matrícula**: 83 pares
+  (matrícula, persona) tienen 141 filas de más — mismo usuario en el 81% de los casos, el
+  71% grabadas dentro de las 24 h de la original. Mismo patrón que MAREU S.A.S. y
+  Cantalejos (§7), pero sobre matrículas que ni existen. El `ID_MATRICULA` huérfano tiene
+  tres causas distintas: número en un rango donde R00 no tiene nada (253.250-1.400.000,
+  156 filas), borrador de un trámite que terminó creando otra matrícula que sí existe (19
+  filas, ej. caso `00CASO007322424000`), y el `NU_MATRICULA` cargado por error en el
+  campo `ID_MATRICULA` (5 filas). Clasificación heurística completa y **DML de revisión**
+  (`DELETE`, no ejecutado) en `scripts/out/dml_borrado_titulares_huerfanos_propuesto_2026-09-24.sql`:
+  **140 casos con DELETE propuesto directo** (copias confirmadas), 24 marcados a verificar
+  antes, 313 sin propuesta (falta evidencia). **Confirmado por el usuario (24/09/2026):
+  este análisis no toca B4** (el trabajo ahí es aparte: deduplicar la tabla de personas y
+  reasignar FK al candidato, no tocar los históricos); para B2 sí corresponde un `DELETE`
+  de revisión sobre el registro duplicado. Pendiente: correr el DML propuesto contra la
+  base cuando vuelva a estar el túnel SSH arriba (no estaba disponible el 24/09) y
+  confirmar con el equipo de SIRCLAN el origen del rango 253.250-1.400.000 y si WORKFLOW
+  reserva un `ID_MATRICULA` provisorio al abrir un trámite (nadie en el equipo sabe hoy
+  cómo funciona esa parte internamente).
+- **Validación del 25/09/2026 de esas 477 (reemplaza la heurística del 24/09).** Ver
+  `scripts/out/reporte_validacion_titulares_huerfanos_2026-09-25.md`. Resumen:
+  - **400 filas (84%)**: el trámite "Generación de Mat SIRC" (formulario R18, procesos
+    1230/4029/4033/4035) grabó los titulares de la procedencia con
+    `ID_MATRICULA = R18_A1.NU_MATRICULA_PRO` (el número de la matrícula de origen, casi
+    siempre **sin el departamento**), en vez de `R18.CD_MATRICULA`. `NU_MATRICULA` =
+    `<depto><8 dígitos>`: el "rango 253.250–1.400.000" y la banda baja son **números de
+    matrícula sin departamento**, no IDs de un sistema anterior. 385 de las 400 tienen a la
+    persona como titular de la matrícula real, casi siempre ya **histórica en B4**.
+  - **49 filas**: matrícula sin cabecera en `DIG_DOC_R00` pero con el resto del formulario
+    vivo (`R00_A1/A2/B1/B3/B8`). En 6.0M–6.39M es el proceso 4025 generando la matrícula dos
+    veces (gemela por nomenclatura unos IDs después). Esas filas B2 tienen `DT_ALTA`,
+    `CD_USER_STORE` y **`RECIENTE` nulos aunque son de 2023–2026**, así que `RECIENTE IS NULL`
+    **no** siempre indica migración (matiza §3).
+  - Hay IDs de la migración (`V_PROCEDENCIA_DOMNIO_MIG`, snapshot `DIG_DOC_R00_B2_20170902`)
+    que desaparecieron de R00 después de 2017: 2.393 IDs de esa tabla ya no están en R00.
+  - Existen tablas útiles no documentadas antes: `DIG_DOC_R00_B2_20170902` /
+    `_B4_20170902` (snapshot de migración), `V_PROCEDENCIA_DOMNIO_MIG` (tomo/foja de cada
+    matrícula migrada), `"CASE"` (casos BPM, clave `DOCUMENT_KEY_MAIN` = `NU_CASO_ORIGEN`),
+    `DOCUMENTO_ANEXO` (formularios anexados a un caso), `DIG_DOC_R18*` (matriculación) y
+    el esquema `SIRCWEB` (otra copia de R00/B2/B4/B5, analizada el 10/09).
+  - Clasificación: 315 CANDIDATO_ELIMINACION (92 ALTO), 120 REVISAR, 42 CONSERVAR, 0 sin
+    explicación. **⚠️ 36 de los 140 `DELETE` activos del DML del 24/09 pasan a REVISAR**:
+    son copias en grupos donde cambian fecha desde, porcentaje o asiento (posibles actos
+    distintos). Ese DML no se usa tal como está.
+  - El reporte pedido en `docs/` se generó en `scripts/out/` por la regla §0.
 
 ---
 

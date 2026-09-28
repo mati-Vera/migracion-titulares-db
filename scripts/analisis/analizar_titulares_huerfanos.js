@@ -178,4 +178,7 @@ function main() {
   console.log(L.join('\n'));
 }
 
-main();
+// Importable desde validar_titulares_huerfanos.js (25/09) para recuperar la
+// categoría heurística original fila por fila sin reescribir la lógica.
+if (require.main === module) main();
+module.exports = { cargar, marcarRegrabados, clasificar };
